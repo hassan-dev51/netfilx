@@ -29,6 +29,22 @@ const AuthPage = () => {
     }));
   }, []);
 
+  const register = useCallback(async () => {
+    const { name, email, password } = credential;
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (res.ok) {
+        return res.json();
+      }
+    } catch (error) {
+      alert("Canot register");
+    }
+  }, [credential]);
+
+  const login = useCallback(() => {}, []);
   return (
     <div className="relative h-full w-full bg-[url('/images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
       <div className="bg-black w-full h-full lg:bg-opacity-50">
@@ -66,7 +82,7 @@ const AuthPage = () => {
               />
             </div>
             <button
-              //   onClick={credential.variant === "login" ? login : register}
+              onClick={credential.variant === "login" ? login : register}
               className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition"
             >
               {credential.variant === "login" ? "Login" : "Sign up"}
