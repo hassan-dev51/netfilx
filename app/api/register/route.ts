@@ -5,7 +5,6 @@ import { hash } from "bcrypt";
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
-    console.log(email, password, name);
 
     if (email === null) throw new Error("invalid email");
     const existingUser = await prismadb.user.findUnique({
@@ -33,7 +32,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(newUser);
     return NextResponse.json({ newUser }, { status: 200 });
   } catch (error) {
     console.log(error);
