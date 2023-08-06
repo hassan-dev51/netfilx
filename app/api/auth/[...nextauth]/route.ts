@@ -1,12 +1,24 @@
 import NextAuth from "next-auth/next";
+//we are using these three providers for login
 import Credentials from "next-auth/providers/credentials";
+import GithubProviders from "next-auth/providers/github";
+import GoogleProviders from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcrypt";
 
 import prismadb from "@/lib/prismadb";
 
-export default NextAuth({
+const handler = NextAuth({
   //user input manually
   providers: [
+    GithubProviders({
+      clientId: process.env.GITHUB_ID || "",
+      clientSecret: process.env.GITHUB_SECRET || "",
+    }),
+    GoogleProviders({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
     Credentials({
       id: "credentials",
       name: "Credentials",
@@ -59,7 +71,7 @@ export default NextAuth({
 
   //it will tell us the log in the terminal it is useful during development
   debug: process.env.NODE_ENV === "development",
-
+  adapter: PrismaAdapter(prismadb),
   session: {
     strategy: "jwt",
   },
@@ -68,3 +80,4 @@ export default NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
+export { handler as GET, handler as POST };

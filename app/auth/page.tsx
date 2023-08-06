@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+
+import { signIn } from "next-auth/react";
 
 import Input from "@/components/Input";
 
 const AuthPage = () => {
+  //GETTING THE INPUT VALUES FROM USER
   const [credential, setCredential] = useState({
     name: "",
     email: "",
@@ -14,6 +19,8 @@ const AuthPage = () => {
     variant: "login",
   });
 
+  const router = useRouter();
+  //SAVING THEM IN THE STATE-VARIABLE
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const { id, value } = e.currentTarget;
     setCredential((preCredential) => ({
@@ -21,14 +28,14 @@ const AuthPage = () => {
       [id]: value,
     }));
   };
-
+  //GETTING THE BENEFIT OF REUSEABLE COMPONENT
   const toggleVariant = useCallback(() => {
     setCredential((prevCredential) => ({
       ...prevCredential,
       variant: prevCredential.variant === "login" ? "register" : "login",
     }));
   }, []);
-
+  //FUNCTION WHICH WILL RESET THE INPUT FIELD TO THE EMPTY STRING
   const resetCredential = () => {
     setCredential({
       name: "",
@@ -37,11 +44,25 @@ const AuthPage = () => {
       variant: "",
     });
   };
+  //LOGIC FUNCTION WHEN USER HAVE CREATED SUCCEFULL ACCOUNT
 
+  const login = useCallback(async () => {
+    const { email, password } = credential;
+    try {
+      signIn("credentials", {
+        email,
+        password,
+        callbackUrl: "/",
+        redirect: false,
+      });
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
+  }, [credential]);
+  //PERFORMING THE API REQUEST / SENDING DATA TO THE BACKEND
   const register = useCallback(async () => {
     const { name, email, password } = credential;
-    console.log(name, email, password);
-
     try {
       const res = await fetch("/api/register", {
         method: "POST",
@@ -57,13 +78,13 @@ const AuthPage = () => {
         resetCredential();
       }
       const result = await res.json();
+      login();
       return result;
     } catch (error) {
       alert("Canot register");
     }
-  }, [credential]);
+  }, [credential, login]);
 
-  const login = useCallback(() => {}, []);
   return (
     <div className="relative h-full w-full bg-[url('/images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
       <div className="bg-black w-full h-full lg:bg-opacity-50">
@@ -107,10 +128,24 @@ const AuthPage = () => {
               {credential.variant === "login" ? "Login" : "Sign up"}
             </button>
             <div className="flex flex-row items-center gap-4 mt-8 justify-center">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition">
+              <div
+                onClick={() => {
+                  signIn("google", {
+                    callbackUrl: "/",
+                  });
+                }}
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+              >
                 <FcGoogle size={32} />
               </div>
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition">
+              <div
+                onClick={() =>
+                  signIn("github", {
+                    callbackUrl: "/",
+                  })
+                }
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+              >
                 <FaGithub size={32} />
               </div>
             </div>
