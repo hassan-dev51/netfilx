@@ -29,16 +29,35 @@ const AuthPage = () => {
     }));
   }, []);
 
+  const resetCredential = () => {
+    setCredential({
+      name: "",
+      email: "",
+      password: "",
+      variant: "",
+    });
+  };
+
   const register = useCallback(async () => {
     const { name, email, password } = credential;
+    console.log(name, email, password);
+
     try {
       const res = await fetch("/api/register", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ name, email, password }),
       });
-      if (res.ok) {
-        return res.json();
+      if (!res.ok) {
+        alert("Cannot request");
+      } else {
+        alert("Registration Succussfull");
+        resetCredential();
       }
+      const result = await res.json();
+      return result;
     } catch (error) {
       alert("Canot register");
     }

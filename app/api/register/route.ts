@@ -4,10 +4,13 @@ import { hash } from "bcrypt";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name } = await req.json();
+    const { name, email, password } = await req.json();
+    console.log(email, password, name);
+
+    if (email === null) throw new Error("invalid email");
     const existingUser = await prismadb.user.findUnique({
       where: {
-        email,
+        email: email,
       },
     });
 
@@ -22,19 +25,20 @@ export async function POST(req: NextRequest) {
 
     const newUser = await prismadb.user.create({
       data: {
-        email,
         name,
+        email,
         hashedPassword,
         image: "",
         emailVerified: new Date(),
       },
     });
 
-    return NextResponse.json(newUser, { status: 200 });
+    console.log(newUser);
+    return NextResponse.json({ newUser }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { message: "Can'nt post request" },
+      { message: "Can'nt post request", error },
       { status: 500 }
     );
   }
