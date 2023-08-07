@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 
 import { option } from "./api/auth/[...nextauth]/option";
+import Navbar from "@/components/Navbar";
+import Billboard from "@/components/Billboard";
 
 export default async function Home() {
   const session = await getServerSession(option);
@@ -12,9 +14,8 @@ export default async function Home() {
 
   return (
     <div>
-      <h1>Netfilx clone</h1>
-      <p>Welcom Mr {session?.user?.name}</p>
-      <p>Your Email Mr {session?.user?.email}</p>
+      <Navbar />
+      <Billboard />
     </div>
   );
 }

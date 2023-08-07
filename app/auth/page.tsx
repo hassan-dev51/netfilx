@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
@@ -20,7 +18,6 @@ const AuthPage = () => {
     variant: "login",
   });
 
-  const router = useRouter();
   //SAVING THEM IN THE STATE-VARIABLE
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const { id, value } = e.currentTarget;
@@ -53,10 +50,8 @@ const AuthPage = () => {
       signIn("credentials", {
         email,
         password,
-        callbackUrl: "/",
-        redirect: true,
+        callbackUrl: "/profile",
       });
-      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -132,7 +127,7 @@ const AuthPage = () => {
               <div
                 onClick={() => {
                   signIn("google", {
-                    callbackUrl: "/",
+                    callbackUrl: "/profile",
                   });
                 }}
                 className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
@@ -142,7 +137,7 @@ const AuthPage = () => {
               <div
                 onClick={() =>
                   signIn("github", {
-                    callbackUrl: "/",
+                    callbackUrl: "/profile",
                   })
                 }
                 className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
