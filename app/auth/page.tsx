@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 import { signIn } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 import Input from "@/components/Input";
 
@@ -53,7 +54,7 @@ const AuthPage = () => {
         email,
         password,
         callbackUrl: "/",
-        redirect: false,
+        redirect: true,
       });
       router.push("/");
     } catch (error) {
@@ -164,6 +165,7 @@ const AuthPage = () => {
           </div>
         </div>
       </div>
+      <button onClick={() => signOut()}>Sign out</button>
     </div>
   );
 };

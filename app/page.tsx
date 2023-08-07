@@ -1,28 +1,20 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useEffect } from "react";
-export default function Home() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  useEffect(() => {
-    if (status === "unauthenticated" && !session) {
-      router.push("/auth");
-    }
-  }, [status, session, router]);
+import { getServerSession } from "next-auth/next";
+
+import { option } from "./api/auth/[...nextauth]/option";
+
+export default async function Home() {
+  const session = await getServerSession(option);
+  if (!session) {
+    redirect("/auth");
+  }
 
   return (
     <div>
       <h1>Netfilx clone</h1>
-      {!session && (
-        <div>
-          <Link href="/auth">Please sign in to continue</Link>
-        </div>
-      )}{" "}
-      <button onClick={() => signOut()}> {session && <h1>Sign Out</h1>}</button>
+      <p>Welcom Mr {session?.user?.name}</p>
+      <p>Your Email Mr {session?.user?.email}</p>
     </div>
   );
 }
